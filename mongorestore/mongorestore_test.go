@@ -1104,8 +1104,6 @@ func TestSkipStartAndAbortIndexBuild(t *testing.T) {
 		t.SkipNow()
 	}
 
-	sessionProvider.GetNodeType()
-
 	Convey("With a test MongoRestore instance", t, func() {
 		testdb := session.Database("test")
 
@@ -1128,11 +1126,21 @@ func TestSkipStartAndAbortIndexBuild(t *testing.T) {
 			countBeforeRestore, err := dbLocal.Collection("oplog.rs").CountDocuments(ctx, bson.D{})
 			So(err, ShouldBeNil)
 
+			currentTS := uint32(time.Now().UTC().Unix())
 			result := restore.Restore()
 			So(result.Err, ShouldBeNil)
 
 			Convey("No new oplog entries should be recorded", func() {
-				countAfterRestore, err := dbLocal.Collection("oplog.rs").CountDocuments(ctx, bson.D{})
+				// Filter out no-ops
+				queryObj := bson.D{
+					{"$and",
+						bson.A{
+							bson.D{{"ts", bson.M{"$gte": primitive.Timestamp{T: currentTS, I: 1}}}},
+							bson.D{{"op", bson.M{"$ne": "n"}}},
+						},
+					},
+				}
+				countAfterRestore, err := dbLocal.Collection("oplog.rs").CountDocuments(ctx, queryObj)
 
 				So(err, ShouldBeNil)
 				So(countBeforeRestore, ShouldEqual, countAfterRestore)
