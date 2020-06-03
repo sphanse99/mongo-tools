@@ -1264,6 +1264,7 @@ func TestMongoDumpViewsAsCollections(t *testing.T) {
 }
 
 func TestMongoDumpViews(t *testing.T) {
+	t.Skipf("Skipping TestMongoDumpViews until TOOLS-2604 is resolved")
 	testtype.SkipUnlessTestType(t, testtype.IntegrationTestType)
 	log.SetWriter(ioutil.Discard)
 
