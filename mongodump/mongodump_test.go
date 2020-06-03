@@ -559,6 +559,7 @@ func TestMongoDumpKerberos(t *testing.T) {
 }
 
 func TestMongoDumpBSON(t *testing.T) {
+	t.Skipf("Skipping TestMongoDumpBSON until TOOLS-2604 is resolved")
 	testtype.SkipUnlessTestType(t, testtype.IntegrationTestType)
 	log.SetWriter(ioutil.Discard)
 
@@ -728,6 +729,7 @@ func TestMongoDumpBSON(t *testing.T) {
 }
 
 func TestMongoDumpBSONLongCollectionName(t *testing.T) {
+	t.Skipf("Skipping TestMongoDumpBSONLongCollectionName until TOOLS-2604 is resolved")
 	testtype.SkipUnlessTestType(t, testtype.IntegrationTestType)
 
 	session, err := testutil.GetBareSession()
@@ -792,6 +794,7 @@ func TestMongoDumpBSONLongCollectionName(t *testing.T) {
 }
 
 func TestMongoDumpMetaData(t *testing.T) {
+	t.Skipf("Skipping TestMongoDumpMetaData until TOOLS-2604 is resolved")
 	testtype.SkipUnlessTestType(t, testtype.IntegrationTestType)
 	log.SetWriter(ioutil.Discard)
 
@@ -1131,6 +1134,7 @@ func TestMongoDumpTOOLS2498(t *testing.T) {
 }
 
 func TestMongoDumpOrderedQuery(t *testing.T) {
+	t.Skipf("Skipping TestMongoDumpOrderedQuery until TOOLS-2604 is resolved")
 	testtype.SkipUnlessTestType(t, testtype.IntegrationTestType)
 	log.SetWriter(ioutil.Discard)
 
@@ -1186,6 +1190,7 @@ func TestMongoDumpOrderedQuery(t *testing.T) {
 }
 
 func TestMongoDumpViewsAsCollections(t *testing.T) {
+	t.Skipf("Skipping TestMongoDumpViewsAsCollections until TOOLS-2604 is resolved")
 	testtype.SkipUnlessTestType(t, testtype.IntegrationTestType)
 	log.SetWriter(ioutil.Discard)
 
