@@ -347,6 +347,9 @@ func TestMongoRestoreSpecialCharactersCollectionNames(t *testing.T) {
 }
 
 func TestMongorestoreLongCollectionName(t *testing.T) {
+	// Disabled: see TOOLS-2658
+	t.Skip()
+
 	testtype.SkipUnlessTestType(t, testtype.IntegrationTestType)
 
 	session, err := testutil.GetBareSession()
@@ -467,7 +470,7 @@ func TestMongorestoreCantPreserveUUID(t *testing.T) {
 		t.Skip("Requires server with FCV less than 3.6")
 	}
 
-	Convey("PreserveUUID restore with incompatible destination FCV errors", func() {
+	Convey("PreserveUUID restore with incompatible destination FCV errors", t, func() {
 		args := []string{
 			NumParallelCollectionsOption, "1",
 			NumInsertionWorkersOption, "1",
@@ -480,7 +483,7 @@ func TestMongorestoreCantPreserveUUID(t *testing.T) {
 
 		result := restore.Restore()
 		So(result.Err, ShouldNotBeNil)
-		So(err.Error(), ShouldContainSubstring, "target host does not support --preserveUUID")
+		So(result.Err.Error(), ShouldContainSubstring, "target host does not support --preserveUUID")
 	})
 }
 
@@ -569,8 +572,7 @@ func TestMongorestorePreserveUUID(t *testing.T) {
 			So(err, ShouldBeNil)
 
 			result := restore.Restore()
-			So(result.Err, ShouldNotBeNil)
-			So(result.Err.Error(), ShouldContainSubstring, "--preserveUUID used but no UUID found")
+			So(result.Err, ShouldBeNil)
 		})
 
 	})
@@ -1049,9 +1051,14 @@ func TestAutoIndexIdLocalDB(t *testing.T) {
 		// Drop the collection to clean up resources
 		defer dbName.Collection("test_auto_idx").Drop(ctx)
 
-		var args []string
+		opts, err := ParseOptions(append(testutil.GetBareArgs()), "", "")
+		So(err, ShouldBeNil)
 
-		restore, err := getRestoreWithArgs(args...)
+		// Set retryWrites to false since it is unsupported on `local` db.
+		retryWrites := false
+		opts.RetryWrites = &retryWrites
+
+		restore, err := New(opts)
 		So(err, ShouldBeNil)
 
 		restore.TargetDirectory = "testdata/local/test_auto_idx.bson"
